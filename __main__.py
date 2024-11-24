@@ -8,7 +8,7 @@ my_vpc = ec2.Vpc(
     enable_dns_hostnames=True,
     enable_dns_support=True,
     tags={
-        "Name": "PulumiVPC"
+        "Name": "pulumi-vpc"
     }
 )
 
@@ -20,7 +20,7 @@ my_public_subnet = ec2.Subnet(
     map_public_ip_on_launch=True,
     availability_zone="us-east-1a",
     tags={
-        "Name": "MyPublicSubnet"
+        "Name": "my-public-subnet"
     }
 )
 
@@ -29,7 +29,7 @@ my_igw = ec2.InternetGateway(
     "my-igw",
     vpc_id=my_vpc.id,
     tags={
-        "Name": "MyIgW"
+        "Name": "my-igw"
     }
 )
 
@@ -44,7 +44,7 @@ my_route_table = ec2.RouteTable(
         },
     ],
     tags={
-        "Name": "MyRouteTable"
+        "Name": "my-route-table"
     }
 )
 
@@ -91,7 +91,7 @@ sg = ec2.SecurityGroup(
             cidr_blocks=["0.0.0.0/0"],
         )
     ],
-    tags={"Name": "Pulumi-SG"},
+    tags={"Name": "my-sg"},
 )
 
 pulumi.export("SG ID", sg.id)
@@ -111,14 +111,14 @@ echo "<h1>Welcome to Pulumi Nginx Server</h1>" | sudo tee /var/www/html/index.ht
 # Create EC2 instance with the defined security group
 ec2_instance = ec2.Instance(
     "my-ec2-instance",
-    ami="ami-0866a3c8686eaeeba",  # Replace with a valid AMI ID
+    ami="ami-0866a3c8686eaeeba",  # replace with a valid AMI ID
     instance_type="t2.micro",
     subnet_id=my_public_subnet.id,
-    security_groups=[sg.id],  # Attach the security group here
-    associate_public_ip_address=True,  # Make it publicly accessible
-    key_name="demo-ec2",
+    security_groups=[sg.id],  # attach the security group here
+    associate_public_ip_address=True,  # make it publicly accessible
+    key_name="demo-ec2", # give your pem file name or you can create it before
     user_data=user_data_script,
-    tags={"Name": "MyEC2Instance"},
+    tags={"Name": "my-ec2-instance"},
 )
 
 pulumi.export("EC2 Public IP", ec2_instance.public_ip)
